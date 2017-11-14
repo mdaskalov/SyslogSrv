@@ -353,13 +353,15 @@ namespace SyslogSrv
                 {
                     DataPacket p = dataQueue.Dequeue();
                     int len;
-
-                    while ((len = p.data.IndexOf('\n')) != -1)
+                    if (p != null)
                     {
-                        lines.Add(new LogLine(p.ip, p.data.Substring(0, len)));
-                        p.data = p.data.Substring(len + 1);
+                        while ((len = p.data.IndexOf('\n')) != -1)
+                        {
+                            lines.Add(new LogLine(p.ip, p.data.Substring(0, len)));
+                            p.data = p.data.Substring(len + 1);
+                        }
+                        lines.Add(new LogLine(p.ip, p.data));
                     }
-                    lines.Add(new LogLine(p.ip, p.data));
                 }
                 lines.RaiseListChangedEvents = true;
                 lines.ResetBindings();
